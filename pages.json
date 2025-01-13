@@ -1,0 +1,57 @@
+{
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "首頁"
+      }
+    },
+    {
+      "path": "pages/device-info/index",
+      "style": {
+        "navigationBarTitleText": "設備信息"
+      }
+    },
+    {
+      "path": "pages/device-alert/index",
+      "style": {
+        "navigationBarTitleText": "設備消息"
+      }
+    },
+    {
+      "path": "pages/device-utilities/index",
+      "style": {
+        "navigationBarTitleText": "教程"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "white",
+    "navigationBarBackgroundColor": "#000000"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#007aff",
+    "backgroundColor": "#000000",
+    "list": [
+      {
+        "iconPath": "static/home.png",
+        "selectedIconPath": "static/home.png",
+        "pagePath": "pages/index/index",
+        "text": "首頁"
+      },
+      {
+        "iconPath": "static/utilities.png",
+        "selectedIconPath": "static/utilities.png",
+        "pagePath": "pages/device-utilities/index",
+        "text": "教程"
+      },
+      {
+        "iconPath": "static/message.png",
+        "selectedIconPath": "static/message.png",
+        "pagePath": "pages/device-alert/index",
+        "text": "消息"
+      }
+    ]
+  }
+}

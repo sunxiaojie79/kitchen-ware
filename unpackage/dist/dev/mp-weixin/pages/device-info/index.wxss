@@ -1,0 +1,135 @@
+
+.container {
+  background-color: #000;
+  min-height: 100vh;
+  gap: 20rpx;
+}
+.section {
+  border-radius: 10rpx;
+  overflow: hidden;
+  margin-bottom: 20rpx;
+  background-color: #1a1a1a;
+  padding: 20rpx;
+}
+.top-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30rpx;
+}
+.device-icon {
+  width: 180rpx;
+  height: 180rpx;
+  margin-bottom: 60rpx;
+}
+.icon-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.icon-row {
+  display: flex;
+  justify-content: space-around;
+  width: 40%;
+}
+.icon-wifi {
+  width: 60rpx;
+  height: 60rpx;
+  margin-right: 20rpx;
+}
+.icon-bluetooth {
+  width: 44rpx;
+  height: 60rpx;
+  margin-right: 20rpx;
+}
+.icon-text {
+  color: #fff;
+  font-size: 32rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  background-color: #636568;
+  padding: 0 20rpx;
+}
+.connect-btn {
+  background-color: #2467b0;
+  color: #fff;
+  font-size: 32rpx;
+  padding: 10rpx 40rpx;
+  border-radius: 6rpx;
+  margin-right: 20rpx;
+}
+.data-title {
+  color: #fff;
+  font-size: 32rpx;
+  margin-bottom: 20rpx;
+}
+.data-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.data-item {
+  width: 45%;
+  border: 1px solid #ccc;
+  border-radius: 10rpx;
+  margin-bottom: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 120rpx;
+}
+.data-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 10rpx 0;
+}
+.label {
+  color: #fff;
+  font-size: 32rpx;
+  margin-bottom: 8rpx;
+  text-align: center;
+}
+.value {
+  font-size: 32rpx;
+  text-align: center;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+}
+.value .number {
+  color: #ffb800;
+  font-weight: bold;
+}
+.advanced-settings {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.setting-item {
+  background-color: #1a1a1a;
+  color: #fff;
+  border-radius: 10rpx;
+  text-align: center;
+  width: 45%;
+  border: 1px solid #ccc;
+  gap: 10rpx;
+}
+.setting-item-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 10rpx 20rpx;
+  justify-content: space-between;
+  gap: 10rpx;
+}
+.setting-item text {
+  font-size: 32rpx;
+}
+.icon {
+  width: 60rpx;
+  height: 60rpx;
+}
