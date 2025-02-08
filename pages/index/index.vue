@@ -1,67 +1,87 @@
 <template>
   <view class="container">
     <!-- 设备列表区域 -->
-    <view class="device-list">
-      <view v-for="device in devices" :key="device.imei" class="device-item">
-        <view class="name-text"><text>{{device.name}}</text></view>
-		<view class="device-info-container">
-          <image class="device-icon" src="/static/global.png"></image>
-          <view class="device-details">
-            <text class="ip-text">IP：{{ device.ip }}</text>
-            <text class="imei-text">IMEI：{{ device.imei }}</text>
-          </view>
-          <view class="device-actions">
-            <button class="view-btn" @click="viewDevice(device)">
-              查看设备
-            </button>
-            <image
-              v-if="device.isConnected"
-              class="bluetooth-icon"
-              src="/static/WIFI.png"
-            ></image>
-            <text v-else class="connection-text"> 未连接 </text>
+    <view class="content">
+      <view class="device-list">
+        <view v-for="device in devices" :key="device.imei" class="device-item">
+          <view class="device-info-container">
+            <image class="device-icon" src="/static/global.png"></image>
+            <view class="device-details">
+              <text class="name-text">{{ device.name }}</text>
+            </view>
+            <view>
+              <image
+                v-if="device.isConnected"
+                class="bluetooth-icon"
+                src="/static/WIFI.png"
+              ></image>
+              <text v-else class="connection-text"> 未連接 </text>
+            </view>
+            <view class="device-actions">
+              <button class="view-btn" @click="viewDevice(device)">
+                查看設備
+              </button>
+            </view>
           </view>
         </view>
       </view>
-    </view>
 
-    <!-- 添加设备按钮 -->
-    <view class="add-device">
-      <button class="add-btn" @click="addDevice">添加設備</button>
+      <!-- 添加设备按钮 -->
+      <view class="add-device">
+        <button class="add-btn" @click="addDevice">添加設備</button>
+      </view>
     </view>
   </view>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 
-const deviceInfo = ref({
-  ip: "192.168.1.1",
-  id: "Device001",
+const devices = ref([]);
+
+// 获取设备列表
+const getDeviceList = async () => {
+  try {
+    const res = await uni.request({
+      url: "http://113.45.219.231:84/prod-api/device/listDevices",
+      method: "GET",
+      header: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.data.code === 200) {
+      // 转换接口数据为页面所需格式
+      devices.value = res.data.data.map((item) => ({
+        name: item.deviceName,
+        isConnected: item.deviceStatus === "ONLINE",
+      }));
+    } else {
+      uni.showToast({
+        title: "獲取設備列表失敗",
+        icon: "none",
+      });
+    }
+  } catch (error) {
+    console.error("獲取設備列表錯誤:", error);
+    uni.showToast({
+      title: "網絡請求失敗",
+      icon: "none",
+    });
+  }
+};
+
+// 页面加载时获取设备列表
+onMounted(() => {
+  getDeviceList();
 });
-
-const isConnected = ref(true);
-
-// 设备列表数据
-const devices = ref([
-  {
-	  name:"智能蒸鍋",
-    ip: "192.168.1.100",
-    imei: "123456789012345",
-    isConnected: true,
-  },
-  {
-	  name:"智能掃地機",
-    ip: "192.168.1.101",
-    imei: "987654321098765",
-    isConnected: false,
-  },
-]);
 
 // 查看设备详情
 const viewDevice = (device) => {
   uni.navigateTo({
-    url: `/pages/device-info/index?imei=${device.imei}`,
+    url: `/pages/device-info/index?deviceName=${encodeURIComponent(
+      device.name
+    )}`,
   });
 };
 
@@ -75,10 +95,25 @@ const addDevice = () => {
 
 <style>
 .container {
+  background-color: #000;
+  min-height: 100vh;
+  padding: 20rpx;
+}
+
+.content {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  background-color: #000;
+}
+
+.device-list {
+  flex: 1;
+}
+
+.device-item {
+  background-color: #1a1a1a;
+  border-radius: 10rpx;
+  margin-bottom: 20rpx;
+  padding: 20rpx;
 }
 
 .device-icon {
@@ -91,23 +126,8 @@ const addDevice = () => {
   color: #fff;
 }
 
-/* 设备列表样式 */
-.device-list {
-  flex: 1;
-  padding: 20rpx;
-}
-
-.device-item {
-  background-color: #1a1a1a;
-  border-radius: 10rpx;
-  margin-bottom: 20rpx;
-  padding: 20rpx;
-}
-.name-text{
-	width: 100%;
-	color: #fff;
-	text-align: center;
-	font-size: 32rpx;
+.device-details {
+  gap: 10rpx;
 }
 .device-info-container {
   display: flex;
@@ -116,15 +136,13 @@ const addDevice = () => {
   padding: 0 20rpx;
 }
 
-.device-details {
-  display: flex;
-  flex-direction: column;
-  gap: 10rpx;
+.name-text {
+  width: 100%;
+  text-align: center;
+  font-size: 32rpx;
+  color: #fff;
 }
-
-.connection-text,
-.ip-text,
-.imei-text {
+.connection-text {
   color: #fff;
   font-size: 28rpx;
 }
@@ -142,7 +160,7 @@ const addDevice = () => {
 }
 
 .view-btn {
-  background-color: #007aff;
+  background-color: #2467b0;
   color: #fff;
   font-size: 24rpx;
   padding: 2rpx 10rpx;
@@ -150,10 +168,8 @@ const addDevice = () => {
   min-width: 120rpx;
 }
 
-/* 添加设备按钮样式 */
 .add-device {
-  padding: 20rpx;
-  margin-bottom: 20rpx;
+  margin-top: 20rpx;
 }
 
 .add-btn {
@@ -164,5 +180,6 @@ const addDevice = () => {
   line-height: 80rpx;
   text-align: center;
   border-radius: 10rpx;
+  font-size: 32rpx;
 }
 </style>

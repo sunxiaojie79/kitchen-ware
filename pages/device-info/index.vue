@@ -72,16 +72,59 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 
-const deviceData = ref([
-  { label: "火種時間", value: "2時30分" },
-  { label: "細火時間", value: "1時45分" },
-  { label: "大火時間", value: "3時10分" },
-  { label: "環保火時間", value: "0時50分" },
-  { label: "進水量", value: "5立方" },
-  { label: "排水次數", value: "10次" },
-]);
+const deviceData = ref([]);
+
+// 获取设备详情数据
+const getDeviceInfo = async (deviceName) => {
+  try {
+    const res = await uni.request({
+      url: `http://113.45.219.231:84/prod-api/device/deviceProp`,
+      method: "GET",
+      data: {
+        deviceName: deviceName,
+      },
+      header: {
+        "Content-Type": "application/json",
+      },
+    });
+    console.log(111, res.data);
+    if (res.data.code === 200) {
+      // 转换数据为显示格式
+      deviceData.value = [
+        { label: "火種時間", value: `${res.data.data.sparkFireWorkMinutes}分` },
+        { label: "細火時間", value: `${res.data.data.smallFireWorkMinutes}分` },
+        { label: "大火時間", value: `${res.data.data.bigFireWorkMinutes}分` },
+        { label: "環保火時間", value: `${res.data.data.epFireWorkMinutes}分` },
+        { label: "進水量", value: `${res.data.data.inflowWater}立方` },
+        { label: "排水次數", value: `${res.data.data.drainCount}次` },
+      ];
+    } else {
+      uni.showToast({
+        title: "獲取設備詳情失敗",
+        icon: "none",
+      });
+    }
+  } catch (error) {
+    console.error("獲取設備詳情錯誤:", error);
+    uni.showToast({
+      title: "網絡請求失敗",
+      icon: "none",
+    });
+  }
+};
+
+// 页面加载时获取设备详情
+onMounted(() => {
+  const pages = getCurrentPages();
+  const currentPage = pages[pages.length - 1];
+  const deviceName = decodeURIComponent(currentPage.$page.options.deviceName);
+
+  if (deviceName) {
+    getDeviceInfo(deviceName);
+  }
+});
 
 // 分离数字和非数字
 const splitValue = (value) => {
