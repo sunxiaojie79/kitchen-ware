@@ -1,0 +1,1 @@
+"use strict";const e=require("../../common/vendor.js"),t={__name:"index",setup(t){const n=e.ref([{content:"您的设备状态提醒",time:"2024-01-20 10:30"}]);return(t,c)=>({a:e.f(n.value,((t,n,c)=>({a:e.t(t.content),b:e.t(t.time),c:n})))})}};wx.createPage(t);

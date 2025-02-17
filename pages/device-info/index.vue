@@ -13,7 +13,7 @@
           <image class="icon-bluetooth" src="/static/bluetooth.png"></image>
           <view class="icon-text">IMEI</view>
         </view>
-        <view class="connect-btn">藍牙連接</view>
+        <view class="connect-btn" @click="addDevice">藍牙連接WIFI</view>
       </view>
     </view>
 
@@ -42,8 +42,8 @@
     </view>
 
     <!-- 下部分高级设置 -->
-    <view class="section">
-      <view class="data-title">高級設置</view>
+    <!-- <view class="section"> -->
+    <!-- <view class="data-title">高級設置</view>
       <view class="advanced-settings">
         <view class="setting-item" @click="connectWifi">
           <view
@@ -54,8 +54,8 @@
             <text>連接WIFI</text>
             <image class="icon" src="/static/WIFI.png"></image>
           </view>
-        </view>
-
+        </view> -->
+    <!-- 
         <view class="setting-item" @click="deviceSettings">
           <view
             class="setting-item-content"
@@ -65,9 +65,9 @@
             <text>設備解綁</text>
             <image class="icon" src="/static/link_delete.png"></image>
           </view>
-        </view>
-      </view>
-    </view>
+        </view> -->
+    <!-- </view> -->
+    <!-- </view> -->
   </view>
 </template>
 
@@ -75,12 +75,23 @@
 import { ref, onMounted } from "vue";
 
 const deviceData = ref([]);
-
+// 添加设备
+const addDevice = () => {
+  const pages = getCurrentPages();
+  const currentPage = pages[pages.length - 1];
+  uni.navigateTo({
+    url: `/pages/device-add/index?productKey=${encodeURIComponent(
+      currentPage.options.productKey
+    )}&deviceSecret=${encodeURIComponent(
+      currentPage.options.deviceSecret
+    )}&deviceName=${encodeURIComponent(currentPage.options.deviceName)}`,
+  });
+};
 // 获取设备详情数据
 const getDeviceInfo = async (deviceName) => {
   try {
     const res = await uni.request({
-      url: `http://113.45.219.231:84/prod-api/device/deviceProp`,
+      url: `http://yczmcj.com/prod-api/device/deviceProp`,
       method: "GET",
       data: {
         deviceName: deviceName,
@@ -118,8 +129,9 @@ const getDeviceInfo = async (deviceName) => {
 // 页面加载时获取设备详情
 onMounted(() => {
   const pages = getCurrentPages();
+  console.log("🚀 ~ onMounted ~ pages:", pages);
   const currentPage = pages[pages.length - 1];
-  const deviceName = decodeURIComponent(currentPage.$page.options.deviceName);
+  const deviceName = decodeURIComponent(currentPage.options.deviceName);
 
   if (deviceName) {
     getDeviceInfo(deviceName);

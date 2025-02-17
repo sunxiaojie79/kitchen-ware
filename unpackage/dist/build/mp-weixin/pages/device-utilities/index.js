@@ -1,0 +1,1 @@
+"use strict";const e=require("../../common/vendor.js"),t={__name:"index",setup:t=>(e.ref({connected:!0}),e.ref({connected:!0}),e.ref({connected:!0}),e.ref({hotpot:"21时15分",foot:"0时0分"}),e.ref({input:999,output:101}),(e,t)=>({}))};wx.createPage(t);

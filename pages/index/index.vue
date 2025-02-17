@@ -2,20 +2,15 @@
   <view class="container">
     <!-- 设备列表区域 -->
     <view class="content">
-      <view class="device-list">
-        <view v-for="device in devices" :key="device.imei" class="device-item">
+      <view v-if="device.deviceName" class="device-list">
+        <view class="device-item">
           <view class="device-info-container">
             <image class="device-icon" src="/static/global.png"></image>
             <view class="device-details">
-              <text class="name-text">{{ device.name }}</text>
+              <text class="name-text">{{ device.deviceName }}</text>
             </view>
             <view>
-              <image
-                v-if="device.isConnected"
-                class="bluetooth-icon"
-                src="/static/WIFI.png"
-              ></image>
-              <text v-else class="connection-text"> 未連接 </text>
+              <image class="bluetooth-icon" src="/static/WIFI.png"></image>
             </view>
             <view class="device-actions">
               <button class="view-btn" @click="viewDevice(device)">
@@ -25,11 +20,6 @@
           </view>
         </view>
       </view>
-
-      <!-- 添加设备按钮 -->
-      <view class="add-device">
-        <button class="add-btn" @click="addDevice">添加設備</button>
-      </view>
     </view>
   </view>
 </template>
@@ -37,33 +27,93 @@
 <script setup>
 import { ref, onMounted } from "vue";
 
-const devices = ref([]);
+const device = ref({});
 
-// 获取设备列表
-const getDeviceList = async () => {
+// 显示手机号输入弹框
+const showPhoneNumberInput = () => {
+  // 获取之前保存的手机号
+  const savedPhoneNumber = uni.getStorageSync("userPhoneNumber") || "";
+
+  uni.showModal({
+    title: "請輸入手機號碼",
+    editable: true,
+    placeholderText: "請輸入手機號碼",
+    content: savedPhoneNumber, // 将保存的手机号填入输入框
+    success: function (res) {
+      if (res.confirm) {
+        const phoneNumber = res.content;
+        // 验证手机号格式
+        if (/^1[3-9]\d{9}$/.test(phoneNumber)) {
+          // 保存手机号
+          uni.setStorageSync("userPhoneNumber", phoneNumber);
+          // 调用获取设备列表
+          getDevice(phoneNumber);
+        } else {
+          uni.showToast({
+            title: "請輸入正確的手機號碼",
+            icon: "none",
+          });
+          // 重新显示输入框
+          setTimeout(() => {
+            showPhoneNumberInput();
+          }, 1500);
+        }
+      } else {
+        // 用户点击取消，提示必须输入手机号
+        uni.showToast({
+          title: "必須輸入手機號碼",
+          icon: "none",
+        });
+        // 重新显示输入框
+        setTimeout(() => {
+          showPhoneNumberInput();
+        }, 1500);
+      }
+    },
+  });
+};
+
+// 页面加载时执行
+onMounted(() => {
+  showPhoneNumberInput();
+});
+
+// getDevice 方法保持不变，但确保使用传入的 phoneNumber 参数
+const getDevice = async (phoneNumber) => {
+  if (!phoneNumber) {
+    uni.showToast({
+      title: "手機號碼不能為空",
+      icon: "none",
+    });
+    return;
+  }
+
   try {
     const res = await uni.request({
-      url: "http://113.45.219.231:84/prod-api/device/listDevices",
+      url: `http://yczmcj.com/prod-api/device/getDeviceByPhoneNumber/${phoneNumber}`,
       method: "GET",
       header: {
         "Content-Type": "application/json",
       },
     });
-
     if (res.data.code === 200) {
-      // 转换接口数据为页面所需格式
-      devices.value = res.data.data.map((item) => ({
-        name: item.deviceName,
-        isConnected: item.deviceStatus === "ONLINE",
-      }));
+      if (res.data.data) {
+        device.value = res.data.data;
+      } else {
+        uni.showToast({
+          title: "未獲取到設備",
+          icon: "none",
+        });
+      }
+      console.log(222, device.value);
     } else {
       uni.showToast({
-        title: "獲取設備列表失敗",
+        title: "獲取設備失敗",
         icon: "none",
       });
     }
   } catch (error) {
-    console.error("獲取設備列表錯誤:", error);
+    console.error("獲取設備錯誤:", error);
     uni.showToast({
       title: "網絡請求失敗",
       icon: "none",
@@ -71,24 +121,14 @@ const getDeviceList = async () => {
   }
 };
 
-// 页面加载时获取设备列表
-onMounted(() => {
-  getDeviceList();
-});
-
 // 查看设备详情
 const viewDevice = (device) => {
   uni.navigateTo({
     url: `/pages/device-info/index?deviceName=${encodeURIComponent(
-      device.name
-    )}`,
-  });
-};
-
-// 添加设备
-const addDevice = () => {
-  uni.navigateTo({
-    url: "/pages/device-add/index",
+      device.deviceName
+    )}&productKey=${encodeURIComponent(
+      device.productKey
+    )}&deviceSecret=${encodeURIComponent(device.deviceSecret)}`,
   });
 };
 </script>
@@ -181,5 +221,6 @@ const addDevice = () => {
   text-align: center;
   border-radius: 10rpx;
   font-size: 32rpx;
+  margin-bottom: 20rpx;
 }
 </style>

@@ -23,6 +23,12 @@
       "style": {
         "navigationBarTitleText": "教程"
       }
+    },
+    {
+      "path": "pages/device-add/index",
+      "style": {
+        "navigationBarTitleText": "添加設備"
+      }
     }
   ],
   "globalStyle": {
@@ -53,5 +59,11 @@
         "text": "消息"
       }
     ]
+  },
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      "^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
+    }
   }
 }

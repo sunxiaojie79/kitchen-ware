@@ -1,0 +1,1 @@
+<view class="container"><view class="message-list"><view wx:for="{{a}}" wx:for-item="message" wx:key="c" class="message-item"><text class="message-text">{{message.a}}</text><text class="message-time">{{message.b}}</text></view></view></view>

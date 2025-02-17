@@ -6,6 +6,7 @@ if (!Math) {
   "./pages/device-info/index.js";
   "./pages/device-alert/index.js";
   "./pages/device-utilities/index.js";
+  "./pages/device-add/index.js";
 }
 const _sfc_main = {
   __name: "App",
