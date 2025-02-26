@@ -29,11 +29,18 @@
           <view class="data-content">
             <text class="label">{{ item.label }}</text>
             <view class="value">
-              <template
-                v-for="(part, index) in splitValue(item.value)"
-                :key="index"
-              >
-                <text :class="{ number: isNumber(part) }">{{ part }}</text>
+              <template v-if="isStatusValue(item.value)">
+                <text :class="getStatusClass(item.value)">{{
+                  item.value
+                }}</text>
+              </template>
+              <template v-else>
+                <template
+                  v-for="(part, index) in splitValue(item.value)"
+                  :key="index"
+                >
+                  <text :class="{ number: isNumber(part) }">{{ part }}</text>
+                </template>
               </template>
             </view>
           </view>
@@ -91,7 +98,7 @@ const addDevice = () => {
 const getDeviceInfo = async (deviceName) => {
   try {
     const res = await uni.request({
-      url: `http://yczmcj.com/prod-api/device/deviceProp`,
+      url: `https://yczmcj.com/prod-api/device/deviceProp`,
       method: "GET",
       data: {
         deviceName: deviceName,
@@ -110,6 +117,30 @@ const getDeviceInfo = async (deviceName) => {
         { label: "環保火時間", value: `${res.data.data.epFireWorkMinutes}分` },
         { label: "進水量", value: `${res.data.data.inflowWater}立方` },
         { label: "排水次數", value: `${res.data.data.drainCount}次` },
+        {
+          label: "引火器",
+          value: `${res.data.data.igniter === 0 ? "正常" : "不正常"}`,
+        },
+        {
+          label: "火種閥門",
+          value: `${res.data.data.sparkValve === 0 ? "正常" : "不正常"}`,
+        },
+        {
+          label: "細火閥",
+          value: `${res.data.data.smallFireValve === 0 ? "正常" : "不正常"}`,
+        },
+        {
+          label: "大火閥",
+          value: `${res.data.data.bigFireValve === 0 ? "正常" : "不正常"}`,
+        },
+        {
+          label: "環保閥",
+          value: `${res.data.data.epFireValve === 0 ? "正常" : "不正常"}`,
+        },
+        {
+          label: "排水閥",
+          value: `${res.data.data.drainValve === 0 ? "正常" : "不正常"}`,
+        },
       ];
     } else {
       uni.showToast({
@@ -153,6 +184,16 @@ const connectWifi = () => {
 
 const deviceSettings = () => {
   // 设备设置逻辑
+};
+
+// 判断是否为状态值（正常/不正常）
+const isStatusValue = (value) => {
+  return value === "正常" || value === "不正常";
+};
+
+// 获取状态值的样式类
+const getStatusClass = (value) => {
+  return value === "正常" ? "status-normal" : "status-abnormal";
 };
 </script>
 
@@ -270,6 +311,16 @@ const deviceSettings = () => {
 
 .value .number {
   color: #ffb800;
+  font-weight: bold;
+}
+
+.value .status-normal {
+  color: #00ff00; /* 绿色 */
+  font-weight: bold;
+}
+
+.value .status-abnormal {
+  color: #ff0000; /* 红色 */
   font-weight: bold;
 }
 

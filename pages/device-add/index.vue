@@ -142,8 +142,8 @@ const startBluetoothDevicesDiscovery = () => {
     },
     fail: (error) => {
       console.error("搜索蓝牙设备失败:", error);
-      uni.showToast({
-        title: "搜索設備失敗",
+      uni.showModal({
+        title: "搜索設備失敗" + error.errCode + error.errMsg,
         icon: "none",
       });
     },

@@ -76,8 +76,8 @@ const _sfc_main = {
         },
         fail: (error) => {
           common_vendor.index.__f__("error", "at pages/device-add/index.vue:144", "搜索蓝牙设备失败:", error);
-          common_vendor.index.showToast({
-            title: "搜索設備失敗",
+          common_vendor.index.showModal({
+            title: "搜索設備失敗" + error.errCode + error.errMsg,
             icon: "none"
           });
         }

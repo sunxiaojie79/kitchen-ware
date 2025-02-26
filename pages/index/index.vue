@@ -29,28 +29,28 @@ import { ref, onMounted } from "vue";
 
 const device = ref({});
 
-// 显示手机号输入弹框
-const showPhoneNumberInput = () => {
-  // 获取之前保存的手机号
-  const savedPhoneNumber = uni.getStorageSync("userPhoneNumber") || "";
+// 显示设备名称输入框
+const showDeviceNameInput = () => {
+  // 获取之前保存的设备名称
+  const savedDeviceName = uni.getStorageSync("userDeviceName") || "";
 
   uni.showModal({
-    title: "請輸入手機號碼",
+    title: "請輸入設備名稱",
     editable: true,
-    placeholderText: "請輸入手機號碼",
-    content: savedPhoneNumber, // 将保存的手机号填入输入框
+    placeholderText: "請輸入設備名稱",
+    content: savedDeviceName, // 将保存的设备名称填入输入框
     success: function (res) {
       if (res.confirm) {
-        const phoneNumber = res.content;
-        // 验证手机号格式
-        if (/^1[3-9]\d{9}$/.test(phoneNumber)) {
-          // 保存手机号
-          uni.setStorageSync("userPhoneNumber", phoneNumber);
+        const deviceName = res.content.trim();
+        // 验证设备名称是否为空
+        if (deviceName) {
+          // 保存设备名称
+          uni.setStorageSync("userDeviceName", deviceName);
           // 调用获取设备列表
-          getDevice(phoneNumber);
+          getDevice(deviceName);
         } else {
           uni.showToast({
-            title: "請輸入正確的手機號碼",
+            title: "請輸入正確的設備名稱",
             icon: "none",
           });
           // 重新显示输入框
@@ -59,9 +59,9 @@ const showPhoneNumberInput = () => {
           }, 1500);
         }
       } else {
-        // 用户点击取消，提示必须输入手机号
+        // 用户点击取消，提示必须输入设备名称
         uni.showToast({
-          title: "必須輸入手機號碼",
+          title: "必須輸入設備名稱",
           icon: "none",
         });
         // 重新显示输入框
@@ -75,14 +75,14 @@ const showPhoneNumberInput = () => {
 
 // 页面加载时执行
 onMounted(() => {
-  showPhoneNumberInput();
+  showDeviceNameInput();
 });
 
-// getDevice 方法保持不变，但确保使用传入的 phoneNumber 参数
-const getDevice = async (phoneNumber) => {
-  if (!phoneNumber) {
+// getDevice 方法保持不变，但确保使用传入的 deviceName 参数
+const getDevice = async (deviceName) => {
+  if (!deviceName) {
     uni.showToast({
-      title: "手機號碼不能為空",
+      title: "設備名稱不能為空",
       icon: "none",
     });
     return;
@@ -90,7 +90,7 @@ const getDevice = async (phoneNumber) => {
 
   try {
     const res = await uni.request({
-      url: `http://yczmcj.com/prod-api/device/getDeviceByPhoneNumber/${phoneNumber}`,
+      url: `https://yczmcj.com/prod-api/device/getDeviceByDeviceName/${deviceName}`,
       method: "GET",
       header: {
         "Content-Type": "application/json",

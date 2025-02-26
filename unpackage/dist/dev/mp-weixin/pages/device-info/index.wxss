@@ -104,6 +104,14 @@
   color: #ffb800;
   font-weight: bold;
 }
+.value .status-normal {
+  color: #00ff00; /* 绿色 */
+  font-weight: bold;
+}
+.value .status-abnormal {
+  color: #ff0000; /* 红色 */
+  font-weight: bold;
+}
 .advanced-settings {
   display: flex;
   justify-content: space-between;

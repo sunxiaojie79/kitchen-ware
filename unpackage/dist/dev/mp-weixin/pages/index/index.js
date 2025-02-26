@@ -5,23 +5,23 @@ const _sfc_main = {
   __name: "index",
   setup(__props) {
     const device = common_vendor.ref({});
-    const showPhoneNumberInput = () => {
-      const savedPhoneNumber = common_vendor.index.getStorageSync("userPhoneNumber") || "";
+    const showDeviceNameInput = () => {
+      const savedDeviceName = common_vendor.index.getStorageSync("userDeviceName") || "";
       common_vendor.index.showModal({
-        title: "請輸入手機號碼",
+        title: "請輸入設備名稱",
         editable: true,
-        placeholderText: "請輸入手機號碼",
-        content: savedPhoneNumber,
-        // 将保存的手机号填入输入框
+        placeholderText: "請輸入設備名稱",
+        content: savedDeviceName,
+        // 将保存的设备名称填入输入框
         success: function(res) {
           if (res.confirm) {
-            const phoneNumber = res.content;
-            if (/^1[3-9]\d{9}$/.test(phoneNumber)) {
-              common_vendor.index.setStorageSync("userPhoneNumber", phoneNumber);
-              getDevice(phoneNumber);
+            const deviceName = res.content.trim();
+            if (deviceName) {
+              common_vendor.index.setStorageSync("userDeviceName", deviceName);
+              getDevice(deviceName);
             } else {
               common_vendor.index.showToast({
-                title: "請輸入正確的手機號碼",
+                title: "請輸入正確的設備名稱",
                 icon: "none"
               });
               setTimeout(() => {
@@ -30,7 +30,7 @@ const _sfc_main = {
             }
           } else {
             common_vendor.index.showToast({
-              title: "必須輸入手機號碼",
+              title: "必須輸入設備名稱",
               icon: "none"
             });
             setTimeout(() => {
@@ -41,19 +41,19 @@ const _sfc_main = {
       });
     };
     common_vendor.onMounted(() => {
-      showPhoneNumberInput();
+      showDeviceNameInput();
     });
-    const getDevice = async (phoneNumber) => {
-      if (!phoneNumber) {
+    const getDevice = async (deviceName) => {
+      if (!deviceName) {
         common_vendor.index.showToast({
-          title: "手機號碼不能為空",
+          title: "設備名稱不能為空",
           icon: "none"
         });
         return;
       }
       try {
         const res = await common_vendor.index.request({
-          url: `http://47.83.19.236:80/prod-api/device/getDeviceByPhoneNumber/${phoneNumber}`,
+          url: `https://yczmcj.com/prod-api/device/getDeviceByDeviceName/${deviceName}`,
           method: "GET",
           header: {
             "Content-Type": "application/json"
