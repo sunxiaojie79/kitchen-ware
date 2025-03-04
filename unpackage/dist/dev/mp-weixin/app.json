@@ -26,12 +26,6 @@
         "selectedIconPath": "static/utilities.png",
         "pagePath": "pages/device-utilities/index",
         "text": "教程"
-      },
-      {
-        "iconPath": "static/message.png",
-        "selectedIconPath": "static/message.png",
-        "pagePath": "pages/device-alert/index",
-        "text": "消息"
       }
     ]
   },

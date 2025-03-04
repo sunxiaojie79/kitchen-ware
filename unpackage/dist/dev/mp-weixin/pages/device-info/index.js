@@ -16,6 +16,13 @@ const _sfc_main = {
         )}&deviceName=${encodeURIComponent(currentPage.options.deviceName)}`
       });
     };
+    const convertToHourMinute = (minutes) => {
+      if (!minutes)
+        return "0時0分";
+      const hours = Math.floor(minutes / 60);
+      const mins = minutes % 60;
+      return `${hours}時${mins}分`;
+    };
     const getDeviceInfo = async (deviceName) => {
       try {
         const res = await common_vendor.index.request({
@@ -28,17 +35,29 @@ const _sfc_main = {
             "Content-Type": "application/json"
           }
         });
-        common_vendor.index.__f__("log", "at pages/device-info/index.vue:110", 111, res.data);
+        common_vendor.index.__f__("log", "at pages/device-info/index.vue:119", 111, res.data);
         if (res.data.code === 200) {
           deviceData.value = [
-            { label: "火種時間", value: `${res.data.data.sparkFireWorkMinutes}分` },
-            { label: "細火時間", value: `${res.data.data.smallFireWorkMinutes}分` },
-            { label: "大火時間", value: `${res.data.data.bigFireWorkMinutes}分` },
-            { label: "環保火時間", value: `${res.data.data.epFireWorkMinutes}分` },
+            {
+              label: "火種時間",
+              value: convertToHourMinute(res.data.data.sparkFireWorkMinutes)
+            },
+            {
+              label: "細火時間",
+              value: convertToHourMinute(res.data.data.smallFireWorkMinutes)
+            },
+            {
+              label: "大火時間",
+              value: convertToHourMinute(res.data.data.bigFireWorkMinutes)
+            },
+            {
+              label: "環保火時間",
+              value: convertToHourMinute(res.data.data.epFireWorkMinutes)
+            },
             { label: "進水量", value: `${res.data.data.inflowWater}立方` },
             { label: "排水次數", value: `${res.data.data.drainCount}次` },
             {
-              label: "引火器",
+              label: "點火器",
               value: `${res.data.data.igniter === 0 ? "正常" : "不正常"}`
             },
             {
@@ -69,20 +88,29 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/device-info/index.vue:152", "獲取設備詳情錯誤:", error);
+        common_vendor.index.__f__("error", "at pages/device-info/index.vue:173", "獲取設備詳情錯誤:", error);
         common_vendor.index.showToast({
           title: "網絡請求失敗",
           icon: "none"
         });
       }
     };
+    let intervalId = null;
     common_vendor.onMounted(() => {
       const pages = getCurrentPages();
-      common_vendor.index.__f__("log", "at pages/device-info/index.vue:163", "🚀 ~ onMounted ~ pages:", pages);
+      common_vendor.index.__f__("log", "at pages/device-info/index.vue:186", "🚀 ~ onMounted ~ pages:", pages);
       const currentPage = pages[pages.length - 1];
       const deviceName = decodeURIComponent(currentPage.options.deviceName);
       if (deviceName) {
         getDeviceInfo(deviceName);
+        intervalId = setInterval(() => {
+          getDeviceInfo(deviceName);
+        }, 5e3);
+      }
+    });
+    common_vendor.onUnmounted(() => {
+      if (intervalId) {
+        clearInterval(intervalId);
       }
     });
     const splitValue = (value) => {

@@ -79,7 +79,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 
 const deviceData = ref([]);
 // 添加设备
@@ -94,6 +94,15 @@ const addDevice = () => {
     )}&deviceName=${encodeURIComponent(currentPage.options.deviceName)}`,
   });
 };
+
+// 将分钟转换为"时分"格式
+const convertToHourMinute = (minutes) => {
+  if (!minutes) return "0時0分";
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return `${hours}時${mins}分`;
+};
+
 // 获取设备详情数据
 const getDeviceInfo = async (deviceName) => {
   try {
@@ -111,14 +120,26 @@ const getDeviceInfo = async (deviceName) => {
     if (res.data.code === 200) {
       // 转换数据为显示格式
       deviceData.value = [
-        { label: "火種時間", value: `${res.data.data.sparkFireWorkMinutes}分` },
-        { label: "細火時間", value: `${res.data.data.smallFireWorkMinutes}分` },
-        { label: "大火時間", value: `${res.data.data.bigFireWorkMinutes}分` },
-        { label: "環保火時間", value: `${res.data.data.epFireWorkMinutes}分` },
+        {
+          label: "火種時間",
+          value: convertToHourMinute(res.data.data.sparkFireWorkMinutes),
+        },
+        {
+          label: "細火時間",
+          value: convertToHourMinute(res.data.data.smallFireWorkMinutes),
+        },
+        {
+          label: "大火時間",
+          value: convertToHourMinute(res.data.data.bigFireWorkMinutes),
+        },
+        {
+          label: "環保火時間",
+          value: convertToHourMinute(res.data.data.epFireWorkMinutes),
+        },
         { label: "進水量", value: `${res.data.data.inflowWater}立方` },
         { label: "排水次數", value: `${res.data.data.drainCount}次` },
         {
-          label: "引火器",
+          label: "點火器",
           value: `${res.data.data.igniter === 0 ? "正常" : "不正常"}`,
         },
         {
@@ -157,6 +178,8 @@ const getDeviceInfo = async (deviceName) => {
   }
 };
 
+let intervalId = null;
+
 // 页面加载时获取设备详情
 onMounted(() => {
   const pages = getCurrentPages();
@@ -166,6 +189,15 @@ onMounted(() => {
 
   if (deviceName) {
     getDeviceInfo(deviceName);
+    intervalId = setInterval(() => {
+      getDeviceInfo(deviceName);
+    }, 5000);
+  }
+});
+
+onUnmounted(() => {
+  if (intervalId) {
+    clearInterval(intervalId);
   }
 });
 
