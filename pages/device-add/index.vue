@@ -219,7 +219,7 @@ const getCharacteristics = (device, serviceId) => {
       );
       setTimeout(() => {
         sendData(device, serviceId, writeCharacteristicId);
-      }, 1000);
+      }, 2000);
 
       // startNotify(device, serviceId, writeCharacteristicId);
     },
