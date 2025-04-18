@@ -92,10 +92,20 @@ const _sfc_main = {
             icon: "success"
           });
           common_vendor.index.__f__("log", "at pages/device-add/index.vue:162", "🚀 ~ connectDevice ~ res:", res);
-          getServices(device);
+          common_vendor.index.setBLEMTU({
+            deviceId: device.deviceId,
+            mtu: 200,
+            success: (res2) => {
+              common_vendor.index.__f__("log", "at pages/device-add/index.vue:167", "🚀 ~ setBLEMTU ~ res:", res2);
+              getServices(device);
+            },
+            fail: (error) => {
+              common_vendor.index.__f__("error", "at pages/device-add/index.vue:171", "设置MTU失败:", error);
+            }
+          });
         },
         fail: (error) => {
-          common_vendor.index.__f__("error", "at pages/device-add/index.vue:170", "连接失败:", error);
+          common_vendor.index.__f__("error", "at pages/device-add/index.vue:180", "连接失败:", error);
           common_vendor.index.showToast({
             title: "連接失敗",
             icon: "none"
@@ -107,11 +117,11 @@ const _sfc_main = {
       common_vendor.index.getBLEDeviceServices({
         deviceId: device.deviceId,
         success: (res) => {
-          common_vendor.index.__f__("log", "at pages/device-add/index.vue:184", "🚀 ~ getServices ~ res:", res);
+          common_vendor.index.__f__("log", "at pages/device-add/index.vue:194", "🚀 ~ getServices ~ res:", res);
           getCharacteristics(device, res.services[0].uuid);
         },
         fail: (error) => {
-          common_vendor.index.__f__("error", "at pages/device-add/index.vue:188", "获取服务失败:", error);
+          common_vendor.index.__f__("error", "at pages/device-add/index.vue:198", "获取服务失败:", error);
         }
       });
     };
@@ -120,7 +130,7 @@ const _sfc_main = {
         deviceId: device.deviceId,
         serviceId,
         success: (res) => {
-          common_vendor.index.__f__("log", "at pages/device-add/index.vue:199", "🚀 ~ getCharacteristics ~ res:", res);
+          common_vendor.index.__f__("log", "at pages/device-add/index.vue:209", "🚀 ~ getCharacteristics ~ res:", res);
           let writeCharacteristicId = "";
           res.characteristics.forEach((characteristic) => {
             if (characteristic.properties.write) {
@@ -129,23 +139,25 @@ const _sfc_main = {
           });
           common_vendor.index.__f__(
             "log",
-            "at pages/device-add/index.vue:206",
+            "at pages/device-add/index.vue:216",
             "🚀 ~ getCharacteristics ~ writeCharacteristicId:",
             writeCharacteristicId
           );
-          sendData(device, serviceId, writeCharacteristicId);
+          setTimeout(() => {
+            sendData(device, serviceId, writeCharacteristicId);
+          }, 1e3);
         },
         fail: (error) => {
-          common_vendor.index.__f__("error", "at pages/device-add/index.vue:215", "获取特征值失败:", error);
+          common_vendor.index.__f__("error", "at pages/device-add/index.vue:227", "获取特征值失败:", error);
         }
       });
     };
     const sendData = (device, serviceId, characteristicId) => {
       const msg = `SSID:${SSID.value};Password:${Password.value};ProductKey:${productKey.value};DeviceName:${deviceName.value};DeviceSecret:${deviceSecret.value};`;
       const buffer = new ArrayBuffer(msg.length);
-      const dataView = new DataView(buffer);
-      for (var i = 0; i < msg.length; i++) {
-        dataView.setUint8(i, msg.charAt(i).charCodeAt());
+      const uint8Array = new Uint8Array(buffer);
+      for (let i = 0; i < msg.length; i++) {
+        uint8Array[i] = msg.codePointAt(i);
       }
       common_vendor.index.writeBLECharacteristicValue({
         deviceId: device.deviceId,
@@ -153,9 +165,9 @@ const _sfc_main = {
         characteristicId,
         value: buffer,
         success: (res) => {
-          common_vendor.index.__f__("log", "at pages/device-add/index.vue:301", "🚀 ~ sendData ~ res:", res);
+          common_vendor.index.__f__("log", "at pages/device-add/index.vue:317", "發送的原始數據:", msg, res);
           common_vendor.index.showToast({
-            title: "发送数据成功",
+            title: "發送數據成功",
             icon: "success"
           });
           setTimeout(() => {
@@ -163,7 +175,7 @@ const _sfc_main = {
           }, 1e3);
         },
         fail: (error) => {
-          common_vendor.index.__f__("error", "at pages/device-add/index.vue:311", "发送数据失败:", error);
+          common_vendor.index.__f__("error", "at pages/device-add/index.vue:327", "發送數據失敗:", error);
         }
       });
     };
@@ -175,6 +187,7 @@ const _sfc_main = {
         currentPage.options.deviceSecret || ""
       );
       deviceName.value = decodeURIComponent(currentPage.options.deviceName || "");
+      common_vendor.index.__f__("log", "at pages/device-add/index.vue:343", "🚀 ~ onMounted ~ deviceSecret:", deviceSecret.value);
       await showWiFiInput();
     });
     common_vendor.onUnmounted(() => {

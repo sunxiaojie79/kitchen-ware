@@ -9,6 +9,9 @@
             <view class="device-details">
               <text class="name-text">{{ device.deviceName }}</text>
             </view>
+            <view class="device-details">
+              <text class="name-text">{{ device.status }}</text>
+            </view>
             <view>
               <image class="bluetooth-icon" src="/static/WIFI.png"></image>
             </view>

@@ -86,12 +86,19 @@ const deviceData = ref([]);
 const addDevice = () => {
   const pages = getCurrentPages();
   const currentPage = pages[pages.length - 1];
+
+  console.log(
+    "🚀 ~ addDevice ~ currentPage1:",
+    encodeURIComponent(decodeURIComponent(currentPage.options.deviceSecret))
+  );
   uni.navigateTo({
     url: `/pages/device-add/index?productKey=${encodeURIComponent(
-      currentPage.options.productKey
+      decodeURIComponent(currentPage.options.productKey)
     )}&deviceSecret=${encodeURIComponent(
-      currentPage.options.deviceSecret
-    )}&deviceName=${encodeURIComponent(currentPage.options.deviceName)}`,
+      decodeURIComponent(currentPage.options.deviceSecret)
+    )}&deviceName=${encodeURIComponent(
+      decodeURIComponent(currentPage.options.deviceName)
+    )}`,
   });
 };
 

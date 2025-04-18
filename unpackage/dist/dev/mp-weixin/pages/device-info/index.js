@@ -8,12 +8,20 @@ const _sfc_main = {
     const addDevice = () => {
       const pages = getCurrentPages();
       const currentPage = pages[pages.length - 1];
+      common_vendor.index.__f__(
+        "log",
+        "at pages/device-info/index.vue:90",
+        "🚀 ~ addDevice ~ currentPage1:",
+        encodeURIComponent(decodeURIComponent(currentPage.options.deviceSecret))
+      );
       common_vendor.index.navigateTo({
         url: `/pages/device-add/index?productKey=${encodeURIComponent(
-          currentPage.options.productKey
+          decodeURIComponent(currentPage.options.productKey)
         )}&deviceSecret=${encodeURIComponent(
-          currentPage.options.deviceSecret
-        )}&deviceName=${encodeURIComponent(currentPage.options.deviceName)}`
+          decodeURIComponent(currentPage.options.deviceSecret)
+        )}&deviceName=${encodeURIComponent(
+          decodeURIComponent(currentPage.options.deviceName)
+        )}`
       });
     };
     const convertToHourMinute = (minutes) => {
@@ -35,7 +43,7 @@ const _sfc_main = {
             "Content-Type": "application/json"
           }
         });
-        common_vendor.index.__f__("log", "at pages/device-info/index.vue:119", 111, res.data);
+        common_vendor.index.__f__("log", "at pages/device-info/index.vue:126", 111, res.data);
         if (res.data.code === 200) {
           deviceData.value = [
             {
@@ -88,7 +96,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/device-info/index.vue:173", "獲取設備詳情錯誤:", error);
+        common_vendor.index.__f__("error", "at pages/device-info/index.vue:180", "獲取設備詳情錯誤:", error);
         common_vendor.index.showToast({
           title: "網絡請求失敗",
           icon: "none"
@@ -98,7 +106,7 @@ const _sfc_main = {
     let intervalId = null;
     common_vendor.onMounted(() => {
       const pages = getCurrentPages();
-      common_vendor.index.__f__("log", "at pages/device-info/index.vue:186", "🚀 ~ onMounted ~ pages:", pages);
+      common_vendor.index.__f__("log", "at pages/device-info/index.vue:193", "🚀 ~ onMounted ~ pages:", pages);
       const currentPage = pages[pages.length - 1];
       const deviceName = decodeURIComponent(currentPage.options.deviceName);
       if (deviceName) {

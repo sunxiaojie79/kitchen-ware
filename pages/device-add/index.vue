@@ -160,7 +160,17 @@ const connectDevice = (device) => {
         icon: "success",
       });
       console.log("🚀 ~ connectDevice ~ res:", res);
-      getServices(device);
+      uni.setBLEMTU({
+        deviceId: device.deviceId,
+        mtu: 200,
+        success: (res) => {
+          console.log("🚀 ~ setBLEMTU ~ res:", res);
+          getServices(device);
+        },
+        fail: (error) => {
+          console.error("设置MTU失败:", error);
+        },
+      });
       // 这里可以添加设备到后端
       // uni.navigateTo({
       //   url: "/pages/index/index",
@@ -207,7 +217,9 @@ const getCharacteristics = (device, serviceId) => {
         "🚀 ~ getCharacteristics ~ writeCharacteristicId:",
         writeCharacteristicId
       );
-      sendData(device, serviceId, writeCharacteristicId);
+      setTimeout(() => {
+        sendData(device, serviceId, writeCharacteristicId);
+      }, 1000);
 
       // startNotify(device, serviceId, writeCharacteristicId);
     },
@@ -284,23 +296,27 @@ const hexCharCodeToStr = (hexCharCodeStr) => {
 
 // 发送数据
 const sendData = (device, serviceId, characteristicId) => {
+  // 构建消息时不需要额外的编码处理
   const msg = `SSID:${SSID.value};Password:${Password.value};ProductKey:${productKey.value};DeviceName:${deviceName.value};DeviceSecret:${deviceSecret.value};`;
-  const buffer = new ArrayBuffer(msg.length);
-  const dataView = new DataView(buffer);
-  // dataView.setUint8(0, 0)
 
-  for (var i = 0; i < msg.length; i++) {
-    dataView.setUint8(i, msg.charAt(i).charCodeAt());
+  // 直接将字符串转换为 Uint8Array
+  const buffer = new ArrayBuffer(msg.length);
+  const uint8Array = new Uint8Array(buffer);
+
+  // 直接写入字符串的 UTF-8 编码
+  for (let i = 0; i < msg.length; i++) {
+    uint8Array[i] = msg.codePointAt(i);
   }
+
   uni.writeBLECharacteristicValue({
     deviceId: device.deviceId,
     serviceId,
     characteristicId,
     value: buffer,
     success: (res) => {
-      console.log("🚀 ~ sendData ~ res:", res);
+      console.log("發送的原始數據:", msg, res); // 添加日志查看发送的原始数据
       uni.showToast({
-        title: "发送数据成功",
+        title: "發送數據成功",
         icon: "success",
       });
       setTimeout(() => {
@@ -308,7 +324,7 @@ const sendData = (device, serviceId, characteristicId) => {
       }, 1000);
     },
     fail: (error) => {
-      console.error("发送数据失败:", error);
+      console.error("發送數據失敗:", error);
     },
   });
 };
@@ -324,7 +340,7 @@ onMounted(async () => {
     currentPage.options.deviceSecret || ""
   );
   deviceName.value = decodeURIComponent(currentPage.options.deviceName || "");
-
+  console.log("🚀 ~ onMounted ~ deviceSecret:", deviceSecret.value);
   await showWiFiInput();
 });
 

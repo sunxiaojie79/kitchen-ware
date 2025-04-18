@@ -68,7 +68,7 @@ const _sfc_main = {
               icon: "none"
             });
           }
-          common_vendor.index.__f__("log", "at pages/index/index.vue:108", 222, device.value);
+          common_vendor.index.__f__("log", "at pages/index/index.vue:111", 222, device.value);
         } else {
           common_vendor.index.showToast({
             title: "獲取設備失敗",
@@ -76,7 +76,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/index/index.vue:116", "獲取設備錯誤:", error);
+        common_vendor.index.__f__("error", "at pages/index/index.vue:119", "獲取設備錯誤:", error);
         common_vendor.index.showToast({
           title: "網絡請求失敗",
           icon: "none"
@@ -98,8 +98,9 @@ const _sfc_main = {
       }, device.value.deviceName ? {
         b: common_assets._imports_0,
         c: common_vendor.t(device.value.deviceName),
-        d: common_assets._imports_1,
-        e: common_vendor.o(($event) => viewDevice(device.value))
+        d: common_vendor.t(device.value.status),
+        e: common_assets._imports_1,
+        f: common_vendor.o(($event) => viewDevice(device.value))
       } : {});
     };
   }
