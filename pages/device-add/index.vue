@@ -160,17 +160,17 @@ const connectDevice = (device) => {
         icon: "success",
       });
       console.log("🚀 ~ connectDevice ~ res:", res);
-      uni.setBLEMTU({
-        deviceId: device.deviceId,
-        mtu: 200,
-        success: (res) => {
-          console.log("🚀 ~ setBLEMTU ~ res:", res);
-          getServices(device);
-        },
-        fail: (error) => {
-          console.error("设置MTU失败:", error);
-        },
-      });
+      // uni.setBLEMTU({
+      //   deviceId: device.deviceId,
+      //   mtu: 200,
+      //   success: (res) => {
+      //     console.log("🚀 ~ setBLEMTU ~ res:", res);
+      getServices(device);
+      //   },
+      //   fail: (error) => {
+      //     console.error("设置MTU失败:", error);
+      //   },
+      // });
       // 这里可以添加设备到后端
       // uni.navigateTo({
       //   url: "/pages/index/index",
